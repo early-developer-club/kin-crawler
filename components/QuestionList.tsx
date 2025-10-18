@@ -5,10 +5,9 @@ import QuestionCard from './QuestionCard';
 
 interface QuestionListProps {
   data: KeywordQuestions[];
-  searchQuery?: string;
 }
 
-export default function QuestionList({ data, searchQuery = '' }: QuestionListProps) {
+export default function QuestionList({ data }: QuestionListProps) {
   const allQuestions = data.flatMap(keywordData => 
     keywordData.questions.map(question => ({ ...question, keyword: keywordData.keyword }))
   );
@@ -25,7 +24,6 @@ export default function QuestionList({ data, searchQuery = '' }: QuestionListPro
           question={question}
           keyword={question.keyword}
           index={index}
-          searchQuery={searchQuery}
         />
       ))}
     </div>

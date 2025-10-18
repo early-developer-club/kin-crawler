@@ -1,3 +1,5 @@
+'use client';
+
 import { useState, useMemo } from 'react';
 import { useKinQuestions } from '@/hooks/useKinQuestions';
 import { Keyword, KEYWORDS, KeywordQuestions } from '@/lib/types';
@@ -98,7 +100,7 @@ export default function Home() {
         )}
 
         {!isLoading && processedData.length > 0 && (
-          <QuestionList data={processedData} searchQuery={searchQuery} />
+          <QuestionList data={processedData} />
         )}
       </main>
     </Layout>
