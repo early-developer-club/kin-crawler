@@ -1,5 +1,6 @@
 'use client';
 
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 
 interface HeaderProps {
@@ -13,7 +14,7 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated }: HeaderP
     <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
       <div className="container flex h-14 items-center">
         <div className="mr-4 hidden md:flex">
-          <a className="mr-6 flex items-center space-x-2" href="/">
+          <Link className="mr-6 flex items-center space-x-2" href="/">
             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="h-6 w-6">
               <path d="M15 12h6"/>
               <path d="M15 6h6"/>
@@ -24,7 +25,7 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated }: HeaderP
               <path d="M3 6V4a1 1 0 0 1 1-1h12a1 1 0 0 1 1 1v16a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1v-2"/>
             </svg>
             <span className="hidden font-bold sm:inline-block">Kin Crawler</span>
-          </a>
+          </Link>
         </div>
 
         <div className="flex flex-1 items-center justify-between space-x-2 md:justify-end">
@@ -54,8 +55,7 @@ export default function Header({ onRefresh, isRefreshing, lastUpdated }: HeaderP
               </svg>
               {isRefreshing ? 'Refreshing...' : 'Refresh'}
             </Button>
-            )}
-          </div>
+          )}
         </div>
       </div>
     </header>
