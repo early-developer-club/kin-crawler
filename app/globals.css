@@ -4,64 +4,64 @@
 
 @layer base {
   :root {
-    --background: 0 0% 95%;
-    --foreground: 0 0% 9%;
-    --card: 0 0% 95%;
-    --card-foreground: 0 0% 9%;
-    --popover: 0 0% 95%;
-    --popover-foreground: 0 0% 9%;
-    --primary: 60 90% 50%; /* Bright Yellow */
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 85%;
-    --secondary-foreground: 0 0% 9%;
-    --muted: 0 0% 85%;
-    --muted-foreground: 0 0% 40%;
-    --accent: 0 0% 90%;
-    --accent-foreground: 0 0% 9%;
+    --background: 220 20% 96.1%; /* light gray */
+    --foreground: 220 15% 25%;
+    --card: 0 0% 100%;
+    --card-foreground: 220 15% 25%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 220 15% 25%;
+    --primary: 221.2 83.2% 53.3%; /* bright blue */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 90%;
+    --secondary-foreground: 220 15% 20%;
+    --muted: 220 15% 85%;
+    --muted-foreground: 220 10% 45%;
+    --accent: 220 15% 92%;
+    --accent-foreground: 220 15% 20%;
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 9%;
-    --input: 0 0% 9%;
-    --ring: 60 90% 50%;
-    --radius: 0rem; /* Sharp corners */
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 221.2 83.2% 53.3%;
+    --radius: 0.5rem;
   }
 
   .dark {
-    --background: 0 0% 9%;
-    --foreground: 0 0% 95%;
-    --card: 0 0% 9%;
-    --card-foreground: 0 0% 95%;
-    --popover: 0 0% 9%;
-    --popover-foreground: 0 0% 95%;
-    --primary: 60 90% 50%; /* Bright Yellow */
-    --primary-foreground: 0 0% 9%;
-    --secondary: 0 0% 15%;
-    --secondary-foreground: 0 0% 95%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 60%;
-    --accent: 0 0% 20%;
-    --accent-foreground: 0 0% 95%;
+    /* For now, dark mode will be the same as light mode. Can be configured later. */
+    --background: 220 15% 10%;
+    --foreground: 220 15% 80%;
+    --card: 220 15% 15%;
+    --card-foreground: 220 15% 80%;
+    --popover: 220 15% 10%;
+    --popover-foreground: 220 15% 80%;
+    --primary: 221.2 83.2% 53.3%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 220 15% 20%;
+    --secondary-foreground: 220 15% 80%;
+    --muted: 220 15% 20%;
+    --muted-foreground: 220 10% 50%;
+    --accent: 220 15% 25%;
+    --accent-foreground: 220 15% 90%;
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 0 0% 100%;
-    --border: 0 0% 95%;
-    --input: 0 0% 95%;
-    --ring: 60 90% 50%;
+    --border: 220 15% 20%;
+    --input: 220 15% 20%;
+    --ring: 221.2 83.2% 53.3%;
   }
 }
 
 @layer base {
   * {
     border-color: hsl(var(--border));
-    border-width: 2px;
   }
   body {
     background-color: hsl(var(--background));
     color: hsl(var(--foreground));
-    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+    font-feature-settings: "rlig" 1, "calt" 1;
   }
 }
 
-/* Animation and other utilities remain the same */
+/* Animation and other utilities */
 @keyframes fadeIn {
   from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); }
 }

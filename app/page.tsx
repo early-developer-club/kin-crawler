@@ -3,8 +3,8 @@
 import { useState, useMemo } from 'react';
 import { useKinQuestions } from '@/hooks/useKinQuestions';
 import { Keyword, KEYWORDS, KeywordQuestions } from '@/lib/types';
-import Layout from '@/components/Layout';
-import ControlPanel from '@/components/ControlPanel';
+import Sidebar from '@/components/Sidebar';
+import MainContentHeader from '@/components/MainContentHeader';
 import QuestionList from '@/components/QuestionList';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import EmptyState from '@/components/EmptyState';
@@ -23,14 +23,6 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<Keyword | 'all'>('all');
   const [sortBy, setSortBy] = useState<'latest' | 'oldest'>('latest');
 
-  const questionCounts = useMemo(() => {
-    return KEYWORDS.reduce((acc, keyword) => {
-      const keywordData = data.find(d => d.keyword === keyword);
-      acc[keyword] = keywordData?.questions.length || 0;
-      return acc;
-    }, {} as Record<string, number>);
-  }, [data]);
-
   const processedData = useMemo(() => {
     let filtered = activeTab === 'all'
       ? data
@@ -48,20 +40,22 @@ export default function Home() {
     return sorted;
   }, [data, activeTab, sortBy]);
 
-  return (
-    <Layout>
-      <ControlPanel
-        activeTab={activeTab}
-        onTabChange={setActiveTab}
-        questionCounts={questionCounts}
-        sortBy={sortBy}
-        onSortChange={setSortBy}
-        onRefresh={refresh}
-        isRefreshing={isRefreshing}
-        lastUpdated={lastUpdated}
-      />
+  const totalItemCount = useMemo(() => {
+    return processedData.reduce((total, keywordData) => total + keywordData.questions.length, 0);
+  }, [processedData]);
 
-      <main className="container mx-auto px-4 py-4">
+  return (
+    <>
+      <Sidebar activeTab={activeTab} onTabChange={setActiveTab} />
+      <main className="flex-1 p-6">
+        <MainContentHeader 
+          sortBy={sortBy} 
+          onSortChange={setSortBy} 
+          onRefresh={refresh} 
+          isRefreshing={isRefreshing}
+          itemCount={totalItemCount}
+        />
+
         {error && (
           <div className="mb-6 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800 p-4">
             <div className="flex items-center justify-between">
@@ -92,10 +86,10 @@ export default function Home() {
           />
         )}
 
-        {!isLoading && data.length > 0 && processedData.length === 0 && (
+        {!isLoading && processedData.length === 0 && (
           <EmptyState
-            title="검색 결과가 없습니다"
-            description="다른 검색어로 시도해보세요"
+            title="결과가 없습니다"
+            description="다른 키워드를 선택해보세요."
           />
         )}
 
@@ -103,6 +97,6 @@ export default function Home() {
           <QuestionList data={processedData} />
         )}
       </main>
-    </Layout>
+    </>
   );
 }
