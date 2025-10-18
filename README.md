@@ -432,6 +432,84 @@ const processedData = useMemo(() => {
 - ✅ 검색 결과 개수 표시
 - ✅ 빈 검색 결과 처리
 
+### Task 7: 배포 준비 및 최적화 ✅
+
+**날짜**: 2025-10-18
+
+#### 실행 내용
+
+1. **SEO 메타 태그 설정** (`app/layout.tsx`)
+   - 상세한 title 및 description 설정
+   - Keywords 메타 태그 추가
+   - Open Graph 태그 (SNS 공유 최적화)
+   - Twitter Card 태그
+   - Robots 메타 태그 (검색엔진 크롤링 허용)
+   - Viewport 설정 (별도 export)
+
+2. **TailwindCSS 4 PostCSS 플러그인 업데이트**
+   - `@tailwindcss/postcss` 설치
+   - `postcss.config.mjs` 업데이트
+   - `app/globals.css` 수정 (`border-border` → `border-color: var(--border)`)
+
+3. **환경변수 설정**
+   - `.env.example` 파일 생성
+   - 크롤링 설정 변수 예시 작성
+   - API 타임아웃 설정
+   - `.gitignore`에 `.env.example` 제외 처리
+
+4. **프로덕션 빌드 테스트**
+   - `npm run build` 성공적으로 완료
+   - First Load JS: 102 kB (최적화됨)
+   - 정적 페이지 생성 (/)
+   - 동적 API 라우트 (ƒ /api/crawl, ƒ /api/proxy)
+
+5. **코드 스플리팅**
+   - Next.js 자동 코드 스플리팅 활용
+   - 페이지별 chunk 분리
+   - Shared chunks 최적화
+
+#### 빌드 결과
+
+```
+Route (app)                                 Size  First Load JS
+┌ ○ /                                    25.6 kB         128 kB
+├ ○ /_not-found                            990 B         103 kB
+├ ƒ /api/crawl                             127 B         102 kB
+└ ƒ /api/proxy                             127 B         102 kB
++ First Load JS shared by all             102 kB
+  ├ chunks/255-cf2e1d3491ac955b.js       45.7 kB
+  ├ chunks/4bd1b696-c023c6e3521b1417.js  54.2 kB
+  └ other shared chunks (total)           1.9 kB
+
+○  (Static)   prerendered as static content
+ƒ  (Dynamic)  server-rendered on demand
+```
+
+#### SEO 최적화
+
+```tsx
+export const metadata: Metadata = {
+  title: "네이버 지식인 AI 크롤러 | ChatGPT, Gemini, Claude 질문 모음",
+  description: "네이버 지식인에서 AI 관련 키워드를 실시간으로 크롤링...",
+  keywords: ["네이버 지식인", "ChatGPT", "Gemini", "Claude", "AI"...],
+  openGraph: {
+    title: "네이버 지식인 AI 크롤러",
+    description: "AI 관련 최신 질문을 한눈에 확인하세요",
+    type: "website",
+    locale: "ko_KR",
+  },
+  // ...
+};
+```
+
+#### 결과물
+- ✅ SEO 메타 태그 완벽 설정
+- ✅ TailwindCSS 4 빌드 이슈 해결
+- ✅ 환경변수 예시 파일 생성
+- ✅ 프로덕션 빌드 성공 (경고 없음)
+- ✅ 번들 크기 최적화 (First Load JS: 102 kB)
+- ✅ Next.js 자동 코드 스플리팅 활용
+
 ## 🎯 다음 단계
 
 - [x] Task 1: 프로젝트 초기 설정 및 기술 스택 결정
@@ -440,5 +518,5 @@ const processedData = useMemo(() => {
 - [x] Task 4: UI 컴포넌트 개발 - 레이아웃
 - [x] Task 5: UI 컴포넌트 개발 - 질문 리스트
 - [x] Task 6: 검색 및 필터링 기능
-- [ ] Task 7: 배포 준비 및 최적화
+- [x] Task 7: 배포 준비 및 최적화
 - [ ] Task 8: Vercel/Netlify 배포
