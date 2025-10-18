@@ -1,14 +1,16 @@
 'use client';
 
 import { Question } from '@/lib/types';
+import HighlightedText from './HighlightedText';
 
 interface QuestionCardProps {
   question: Question;
   keyword: string;
   index: number;
+  searchQuery?: string;
 }
 
-export default function QuestionCard({ question, keyword, index }: QuestionCardProps) {
+export default function QuestionCard({ question, keyword, index, searchQuery = '' }: QuestionCardProps) {
   return (
     <li
       className="group px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-all duration-200 animate-fadeIn"
@@ -28,11 +30,11 @@ export default function QuestionCard({ question, keyword, index }: QuestionCardP
               </span>
             </div>
             <h3 className="text-sm font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors line-clamp-2">
-              {question.title}
+              <HighlightedText text={question.title} query={searchQuery} />
             </h3>
             {question.preview && question.preview !== question.date && (
               <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
-                {question.preview}
+                <HighlightedText text={question.preview} query={searchQuery} />
               </p>
             )}
           </div>

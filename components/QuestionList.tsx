@@ -5,9 +5,10 @@ import QuestionCard from './QuestionCard';
 
 interface QuestionListProps {
   data: KeywordQuestions[];
+  searchQuery?: string;
 }
 
-export default function QuestionList({ data }: QuestionListProps) {
+export default function QuestionList({ data, searchQuery = '' }: QuestionListProps) {
   if (data.length === 0) {
     return null;
   }
@@ -39,6 +40,7 @@ export default function QuestionList({ data }: QuestionListProps) {
                 question={question}
                 keyword={keywordData.keyword}
                 index={index}
+                searchQuery={searchQuery}
               />
             ))}
           </ul>

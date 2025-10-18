@@ -331,6 +331,107 @@ style={{ animationDelay: `${index * 50}ms` }}
 - ✅ 부드러운 인터랙션 및 마이크로 애니메이션
 - ✅ 모바일 최적화 (line-clamp, responsive)
 
+### Task 6: 검색 및 필터링 기능 ✅
+
+**날짜**: 2025-10-18
+
+#### 실행 내용
+
+1. **SearchBar 컴포넌트** (`components/SearchBar.tsx`)
+   - 실시간 검색 기능
+   - 검색어 입력 시 자동 필터링
+   - Clear 버튼 (검색어 초기화)
+   - 검색어 표시 및 애니메이션
+   - 반응형 디자인
+
+2. **SortOptions 컴포넌트** (`components/SortOptions.tsx`)
+   - 최신순/오래된순 정렬 토글
+   - 버튼 스타일 전환 애니메이션
+   - Active 상태 시각적 표시
+
+3. **검색 하이라이팅 시스템**
+   - `utils/highlight.ts` - 하이라이팅 유틸리티 함수
+     - `getHighlightedParts()` - 텍스트를 검색어로 분할
+     - `matchesSearchQuery()` - 검색 매칭 로직
+   - `components/HighlightedText.tsx` - 하이라이트 텍스트 렌더링
+     - 검색어를 노란색 배경으로 강조
+     - 다크모드 지원
+
+4. **QuestionCard 업데이트**
+   - `searchQuery` prop 추가
+   - 제목 및 미리보기에 하이라이팅 적용
+   - HighlightedText 컴포넌트 통합
+
+5. **QuestionList 업데이트**
+   - `searchQuery` prop 전달
+   - 하위 QuestionCard에 검색어 전달
+
+6. **홈페이지 통합** (`app/page.tsx`)
+   - 검색 상태 관리 (`searchQuery`)
+   - 정렬 상태 관리 (`sortBy`)
+   - `useMemo`로 필터링/검색/정렬 최적화
+   - 검색 결과 개수 표시
+   - 검색 결과 없음 상태 처리
+   - 날짜 기반 정렬 로직 (최신순/오래된순)
+
+#### 주요 기능
+
+```tsx
+// 검색 및 필터링 로직
+const processedData = useMemo(() => {
+  // 1. 탭 필터링
+  let filtered = activeTab === 'all' ? data : data.filter(...);
+
+  // 2. 검색 필터링
+  if (searchQuery.trim()) {
+    filtered = filtered.map(keywordData => ({
+      ...keywordData,
+      questions: keywordData.questions.filter(q =>
+        matchesSearchQuery(q.title, q.preview, searchQuery)
+      ),
+    })).filter(keywordData => keywordData.questions.length > 0);
+  }
+
+  // 3. 정렬 (날짜 기준)
+  const sorted = filtered.map(keywordData => ({
+    ...keywordData,
+    questions: [...keywordData.questions].sort((a, b) => {
+      const dateA = new Date(a.date.replace(/\./g, '-')).getTime();
+      const dateB = new Date(b.date.replace(/\./g, '-')).getTime();
+      return sortBy === 'latest' ? dateB - dateA : dateA - dateB;
+    }),
+  }));
+
+  return sorted;
+}, [data, activeTab, searchQuery, sortBy]);
+```
+
+#### 검색 하이라이팅
+
+```tsx
+// HighlightedText 사용 예시
+<HighlightedText
+  text={question.title}
+  query={searchQuery}
+  className="..."
+/>
+
+// 결과: "ChatGPT 사용법" 검색 시 "ChatGPT" 부분이 노란색으로 강조됨
+```
+
+#### 결과물
+- ✅ `components/SearchBar.tsx` - 검색바 컴포넌트
+- ✅ `components/SortOptions.tsx` - 정렬 옵션 컴포넌트
+- ✅ `components/HighlightedText.tsx` - 하이라이트 텍스트 컴포넌트
+- ✅ `utils/highlight.ts` - 하이라이팅 유틸리티
+- ✅ `components/QuestionCard.tsx` - 하이라이팅 적용
+- ✅ `components/QuestionList.tsx` - searchQuery 전달
+- ✅ `app/page.tsx` - 검색/필터/정렬 통합
+- ✅ 실시간 검색 및 하이라이팅
+- ✅ 최신순/오래된순 정렬
+- ✅ 검색 결과 개수 표시
+- ✅ 빈 검색 결과 처리
+
 ## 🎯 다음 단계
 
 - [x] Task 1: 프로젝트 초기 설정 및 기술 스택 결정
@@ -338,6 +439,6 @@ style={{ animationDelay: `${index * 50}ms` }}
 - [x] Task 3: 데이터 관리 및 상태 관리
 - [x] Task 4: UI 컴포넌트 개발 - 레이아웃
 - [x] Task 5: UI 컴포넌트 개발 - 질문 리스트
-- [ ] Task 6: 검색 및 필터링 기능
+- [x] Task 6: 검색 및 필터링 기능
 - [ ] Task 7: 배포 준비 및 최적화
 - [ ] Task 8: Vercel/Netlify 배포

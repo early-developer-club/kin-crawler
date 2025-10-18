@@ -1,14 +1,17 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { useKinQuestions } from '@/hooks/useKinQuestions';
-import { Keyword, KEYWORDS } from '@/lib/types';
+import { Keyword, KEYWORDS, KeywordQuestions } from '@/lib/types';
+import { matchesSearchQuery } from '@/utils/highlight';
 import Layout from '@/components/Layout';
 import Header from '@/components/Header';
 import TabNavigation from '@/components/TabNavigation';
 import QuestionList from '@/components/QuestionList';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
 import EmptyState from '@/components/EmptyState';
+import SearchBar from '@/components/SearchBar';
+import SortOptions, { SortType } from '@/components/SortOptions';
 
 export default function Home() {
   const {
@@ -24,6 +27,8 @@ export default function Home() {
   } = useKinQuestions();
 
   const [activeTab, setActiveTab] = useState<Keyword | 'all'>('all');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [sortBy, setSortBy] = useState<SortType>('latest');
 
   // 키워드별 질문 개수
   const questionCounts = KEYWORDS.reduce((acc, keyword) => {
@@ -32,10 +37,42 @@ export default function Home() {
     return acc;
   }, {} as Record<string, number>);
 
-  // 필터링된 데이터
-  const filteredData = activeTab === 'all'
-    ? data
-    : data.filter(item => item.keyword === activeTab);
+  // 필터링, 검색, 정렬된 데이터
+  const processedData = useMemo(() => {
+    // 1. 탭 필터링
+    let filtered = activeTab === 'all'
+      ? data
+      : data.filter(item => item.keyword === activeTab);
+
+    // 2. 검색 필터링
+    if (searchQuery.trim()) {
+      filtered = filtered.map(keywordData => ({
+        ...keywordData,
+        questions: keywordData.questions.filter(q =>
+          matchesSearchQuery(q.title, q.preview, searchQuery)
+        ),
+      })).filter(keywordData => keywordData.questions.length > 0);
+    }
+
+    // 3. 정렬
+    const sorted: KeywordQuestions[] = filtered.map(keywordData => ({
+      ...keywordData,
+      questions: [...keywordData.questions].sort((a, b) => {
+        // 날짜 문자열을 비교 가능한 형태로 변환
+        const dateA = new Date(a.date.replace(/\./g, '-')).getTime();
+        const dateB = new Date(b.date.replace(/\./g, '-')).getTime();
+
+        return sortBy === 'latest' ? dateB - dateA : dateA - dateB;
+      }),
+    }));
+
+    return sorted;
+  }, [data, activeTab, searchQuery, sortBy]);
+
+  // 검색 결과 개수
+  const searchResultCount = useMemo(() => {
+    return processedData.reduce((total, keywordData) => total + keywordData.questions.length, 0);
+  }, [processedData]);
 
   return (
     <Layout>
@@ -77,6 +114,25 @@ export default function Home() {
           </div>
         )}
 
+        {/* 검색 및 정렬 */}
+        {!isLoading && data.length > 0 && (
+          <div className="mb-6 space-y-4 animate-fadeIn">
+            {/* 검색바 */}
+            <SearchBar onSearch={setSearchQuery} placeholder="질문 제목 또는 내용으로 검색..." />
+
+            {/* 정렬 옵션 및 결과 개수 */}
+            <div className="flex items-center justify-between flex-wrap gap-4">
+              <SortOptions sortBy={sortBy} onSortChange={setSortBy} />
+
+              {searchQuery && (
+                <div className="text-sm text-slate-600 dark:text-slate-400">
+                  <span className="font-medium text-slate-900 dark:text-white">{searchResultCount}개</span>의 검색 결과
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
         {/* 로딩 상태 */}
         {isLoading && <LoadingSkeleton />}
 
@@ -88,9 +144,17 @@ export default function Home() {
           />
         )}
 
+        {/* 검색 결과가 없을 때 */}
+        {!isLoading && data.length > 0 && processedData.length === 0 && (
+          <EmptyState
+            title="검색 결과가 없습니다"
+            description="다른 검색어로 시도해보세요"
+          />
+        )}
+
         {/* 질문 목록 */}
-        {!isLoading && filteredData.length > 0 && (
-          <QuestionList data={filteredData} />
+        {!isLoading && processedData.length > 0 && (
+          <QuestionList data={processedData} searchQuery={searchQuery} />
         )}
       </main>
     </Layout>
