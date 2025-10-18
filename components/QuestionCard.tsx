@@ -14,22 +14,16 @@ export default function QuestionCard({ question, keyword, index }: QuestionCardP
       href={question.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-6 border rounded-lg hover:shadow-lg hover:scale-105 transition-all animate-fadeIn bg-card"
+      className="block p-4 border-b hover:bg-accent transition-colors animate-fadeIn text-current"
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      <div className="flex items-center text-sm text-muted-foreground mb-3">
-        <span className="font-semibold text-primary">{keyword}</span>
-        <span className="mx-2">·</span>
-        <span>{question.date}</span>
+      <div className="flex items-baseline justify-between text-sm">
+        <span className="font-semibold text-primary truncate">{keyword}</span>
+        <span className="text-muted-foreground flex-shrink-0">{question.date}</span>
       </div>
-      <h2 className="text-xl font-bold line-clamp-3 mb-3">
+      <h2 className="text-md font-medium line-clamp-2 mt-1">
         {question.title}
       </h2>
-      {question.preview && question.preview !== question.date && (
-        <p className="text-sm text-muted-foreground line-clamp-3">
-          {question.preview}
-        </p>
-      )}
     </a>
   );
 }
