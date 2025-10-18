@@ -6,6 +6,9 @@ import { Keyword, KEYWORDS } from '@/lib/types';
 import Layout from '@/components/Layout';
 import Header from '@/components/Header';
 import TabNavigation from '@/components/TabNavigation';
+import QuestionList from '@/components/QuestionList';
+import LoadingSkeleton from '@/components/LoadingSkeleton';
+import EmptyState from '@/components/EmptyState';
 
 export default function Home() {
   const {
@@ -75,68 +78,19 @@ export default function Home() {
         )}
 
         {/* 로딩 상태 */}
-        {isLoading && (
-          <div className="flex flex-col items-center justify-center py-12">
-            <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
-            <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">데이터를 불러오는 중...</p>
-          </div>
-        )}
+        {isLoading && <LoadingSkeleton />}
 
         {/* 데이터가 없을 때 */}
         {!isLoading && data.length === 0 && (
-          <div className="flex flex-col items-center justify-center py-12">
-            <svg className="h-16 w-16 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">아직 데이터가 없습니다</p>
-          </div>
+          <EmptyState
+            title="아직 데이터가 없습니다"
+            description="새로고침 버튼을 눌러 네이버 지식인 질문을 불러오세요"
+          />
         )}
 
         {/* 질문 목록 */}
         {!isLoading && filteredData.length > 0 && (
-          <div className="space-y-4">
-            {filteredData.map(keywordData => (
-              <div key={keywordData.keyword} className="rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
-                {/* 키워드 헤더 */}
-                <div className="border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-700 dark:to-slate-800 px-6 py-4">
-                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">
-                    {keywordData.keyword}
-                    <span className="ml-2 text-sm font-normal text-slate-600 dark:text-slate-400">
-                      ({keywordData.questions.length}개)
-                    </span>
-                  </h2>
-                </div>
-
-                {/* 질문 리스트 */}
-                <ul className="divide-y divide-slate-100 dark:divide-slate-700">
-                  {keywordData.questions.map((question, index) => (
-                    <li key={index} className="px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
-                      <a
-                        href={question.link}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="group block"
-                      >
-                        <div className="flex items-start justify-between gap-4">
-                          <h3 className="flex-1 text-sm font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
-                            {question.title}
-                          </h3>
-                          <span className="flex-shrink-0 text-xs text-slate-500 dark:text-slate-400">
-                            {question.date}
-                          </span>
-                        </div>
-                        {question.preview && (
-                          <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
-                            {question.preview}
-                          </p>
-                        )}
-                      </a>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
-          </div>
+          <QuestionList data={filteredData} />
         )}
       </main>
     </Layout>

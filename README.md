@@ -256,13 +256,88 @@ const {
 - ✅ 모바일/태블릿/데스크톱 반응형 지원
 - ✅ 다크모드 완벽 지원
 
+### Task 5: UI 컴포넌트 개발 - 질문 리스트 ✅
+
+**날짜**: 2025-10-18
+
+#### 실행 내용
+
+1. **QuestionCard 컴포넌트** (`components/QuestionCard.tsx`)
+   - 개별 질문 카드 UI
+   - 키워드 배지 표시
+   - 질문 제목 및 미리보기 (line-clamp-2)
+   - 날짜 정보 표시
+   - 외부 링크 아이콘 (hover 시 표시)
+   - Staggered fadeIn 애니메이션 (index * 50ms)
+   - Hover 효과 (배경색 전환, 텍스트 색상 변경)
+
+2. **QuestionList 컴포넌트** (`components/QuestionList.tsx`)
+   - 키워드별 질문 그룹 렌더링
+   - 그라디언트 헤더 (Blue → Purple)
+   - 질문 개수 배지
+   - QuestionCard 통합
+
+3. **LoadingSkeleton 컴포넌트** (`components/LoadingSkeleton.tsx`)
+   - 로딩 중 Skeleton UI
+   - 4개 키워드 섹션 × 3개 아이템 구조
+   - Pulse 애니메이션
+   - 다크모드 지원
+
+4. **EmptyState 컴포넌트** (`components/EmptyState.tsx`)
+   - 데이터 없을 때 빈 상태 UI
+   - 커스터마이징 가능한 title/description
+   - 아이콘 기반 디자인
+   - 중앙 정렬 레이아웃
+
+5. **애니메이션 시스템** (`app/globals.css`)
+   - `@keyframes fadeIn` - 페이드인 + 위로 슬라이드
+   - `@keyframes slideIn` - 왼쪽에서 슬라이드
+   - `@keyframes scaleIn` - 스케일 확대 효과
+   - 유틸리티 클래스: `.animate-fadeIn`, `.animate-slideIn`, `.animate-scaleIn`
+   - 스크롤바 숨김 유틸리티: `.scrollbar-hide`
+   - Line-clamp 유틸리티: `.line-clamp-2`
+
+6. **홈페이지 통합** (`app/page.tsx`)
+   - QuestionList, LoadingSkeleton, EmptyState 컴포넌트 통합
+   - 기존 인라인 코드 제거 (간결한 코드)
+   - 로딩/에러/빈 상태 처리 개선
+
+#### 주요 기능
+```tsx
+// QuestionCard 사용 예시
+<QuestionCard
+  question={question}
+  keyword={keywordData.keyword}
+  index={index}  // 애니메이션 딜레이용
+/>
+
+// Staggered Animation
+style={{ animationDelay: `${index * 50}ms` }}
+```
+
+#### 애니메이션 효과
+- **fadeIn**: 부드러운 페이드인 + 아래→위 이동 (0.4s)
+- **slideIn**: 왼쪽→오른쪽 슬라이드 (0.3s)
+- **scaleIn**: 작게→크게 스케일 (0.3s)
+- **Staggered**: 각 카드가 50ms 간격으로 순차 등장
+
+#### 결과물
+- ✅ `components/QuestionCard.tsx` - 질문 카드 컴포넌트
+- ✅ `components/QuestionList.tsx` - 질문 리스트 컴포넌트
+- ✅ `components/LoadingSkeleton.tsx` - 로딩 스켈레톤
+- ✅ `components/EmptyState.tsx` - 빈 상태 컴포넌트
+- ✅ `app/globals.css` - 애니메이션 시스템 추가
+- ✅ `app/page.tsx` - 새 컴포넌트 통합
+- ✅ 부드러운 인터랙션 및 마이크로 애니메이션
+- ✅ 모바일 최적화 (line-clamp, responsive)
+
 ## 🎯 다음 단계
 
 - [x] Task 1: 프로젝트 초기 설정 및 기술 스택 결정
 - [x] Task 2: 크롤링 로직 구현
 - [x] Task 3: 데이터 관리 및 상태 관리
 - [x] Task 4: UI 컴포넌트 개발 - 레이아웃
-- [ ] Task 5: UI 컴포넌트 개발 - 질문 리스트
+- [x] Task 5: UI 컴포넌트 개발 - 질문 리스트
 - [ ] Task 6: 검색 및 필터링 기능
 - [ ] Task 7: 배포 준비 및 최적화
 - [ ] Task 8: Vercel/Netlify 배포
