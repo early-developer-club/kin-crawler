@@ -148,11 +148,66 @@ curl "http://localhost:3000/api/crawl" | jq -r '.[] | "\(.keyword): \(.questions
 - ✅ 키워드당 최신순 50개 제한 로직 구현
 - ✅ 에러 핸들링 포함
 
+### Task 3: 데이터 관리 및 상태 관리 ✅
+
+**날짜**: 2025-10-18
+
+#### 실행 내용
+
+1. **Zustand 스토어 생성**
+   - `store/useKinStore.ts` - 전역 상태 관리 스토어
+   - 4개 키워드 데이터 동시 관리
+   - 로딩/에러 상태 관리
+   - 마지막 업데이트 시간 추적
+
+2. **상태 관리 기능**
+   - `fetchAllQuestions()` - 모든 키워드 데이터 가져오기
+   - `fetchKeywordQuestions()` - 특정 키워드만 가져오기
+   - `refresh()` - 데이터 새로고침
+   - `clearError()` - 에러 상태 초기화
+
+3. **커스텀 훅 구현**
+   - `hooks/useKinQuestions.ts` - 편리한 데이터 접근 훅
+   - 자동 데이터 fetching 기능
+   - `getQuestionsByKeyword()` - 키워드별 데이터 조회
+   - `totalQuestionsCount` - 전체 질문 개수 계산
+
+4. **홈페이지 UI 업데이트**
+   - `app/page.tsx` - 상태 관리 통합
+   - 로딩/에러 상태 표시
+   - 데이터 새로고침 버튼
+   - 키워드별 통계 카드
+   - 질문 목록 미리보기 (각 키워드당 5개)
+
+#### 주요 기능
+```typescript
+// Zustand 스토어 사용 예시
+const {
+  data,                    // 모든 키워드 데이터
+  isLoading,              // 로딩 상태
+  isRefreshing,           // 새로고침 상태
+  error,                  // 에러 메시지
+  lastUpdated,            // 마지막 업데이트 시간
+  fetchAll,               // 모든 데이터 가져오기
+  fetchKeyword,           // 특정 키워드 가져오기
+  refresh,                // 새로고침
+  clearError,             // 에러 초기화
+} = useKinQuestions();
+```
+
+#### 결과물
+- ✅ `store/useKinStore.ts` - Zustand 전역 상태 관리
+- ✅ `hooks/useKinQuestions.ts` - 커스텀 훅
+- ✅ `app/page.tsx` - 상태 관리 통합 UI
+- ✅ 로딩/에러 상태 처리 완료
+- ✅ 데이터 새로고침 기능 구현
+- ✅ 60초 타임아웃 설정 (크롤링 시간 고려)
+
 ## 🎯 다음 단계
 
 - [x] Task 1: 프로젝트 초기 설정 및 기술 스택 결정
 - [x] Task 2: 크롤링 로직 구현
-- [ ] Task 3: 데이터 관리 및 상태 관리
+- [x] Task 3: 데이터 관리 및 상태 관리
 - [ ] Task 4: UI 컴포넌트 개발 - 레이아웃
 - [ ] Task 5: UI 컴포넌트 개발 - 질문 리스트
 - [ ] Task 6: 검색 및 필터링 기능
