@@ -14,14 +14,14 @@ export default function QuestionCard({ question, keyword, index }: QuestionCardP
       href={question.link}
       target="_blank"
       rel="noopener noreferrer"
-      className="block p-4 border-b hover:bg-accent transition-colors animate-fadeIn group"
+      className="block p-4 border-2 border-border bg-card hover:shadow-[8px_8px_0px_#000] dark:hover:shadow-[8px_8px_0px_#FFF] transition-shadow animate-fadeIn"
       style={{ animationDelay: `${index * 50}ms` }}
     >
-      <div className="flex items-baseline justify-between text-sm">
-        <span className="font-semibold text-muted-foreground truncate">{keyword}</span>
-        <span className="text-muted-foreground flex-shrink-0">{question.date}</span>
+      <div className="flex items-baseline justify-between text-xs">
+        <span className="font-bold uppercase">{keyword}</span>
+        <span className="font-mono">{question.date}</span>
       </div>
-      <h2 className="text-md font-medium line-clamp-2 mt-1 group-hover:text-primary group-hover:underline">
+      <h2 className="text-lg font-bold mt-2 line-clamp-2">
         {question.title}
       </h2>
     </a>

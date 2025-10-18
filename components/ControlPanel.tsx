@@ -27,7 +27,7 @@ export default function ControlPanel({
   lastUpdated,
 }: ControlPanelProps) {
   return (
-    <div className="w-full border-b bg-card">
+    <div className="w-full border-b-4 border-border">
       <div className="container mx-auto px-4 py-2">
         <div className="flex items-center justify-between gap-4">
           <TabNavigation
@@ -35,9 +35,9 @@ export default function ControlPanel({
             onTabChange={onTabChange}
             questionCounts={questionCounts}
           />
-          <div className="flex items-center justify-end gap-4 flex-1">
+          <div className="flex items-center justify-end gap-2 flex-1">
             {lastUpdated && (
-                <div className="hidden lg:block text-sm text-muted-foreground">
+                <div className="hidden lg:block text-sm">
                   Last updated: {lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                 </div>
             )}
