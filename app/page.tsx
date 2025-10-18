@@ -1,11 +1,7 @@
-'use client';
-
 import { useState, useMemo } from 'react';
 import { useKinQuestions } from '@/hooks/useKinQuestions';
 import { Keyword, KEYWORDS, KeywordQuestions } from '@/lib/types';
-import { matchesSearchQuery } from '@/utils/highlight';
 import Layout from '@/components/Layout';
-import Header from '@/components/Header';
 import ControlPanel from '@/components/ControlPanel';
 import QuestionList from '@/components/QuestionList';
 import LoadingSkeleton from '@/components/LoadingSkeleton';
@@ -23,7 +19,6 @@ export default function Home() {
   } = useKinQuestions();
 
   const [activeTab, setActiveTab] = useState<Keyword | 'all'>('all');
-  const [searchQuery, setSearchQuery] = useState('');
   const [sortBy, setSortBy] = useState<'latest' | 'oldest'>('latest');
 
   const questionCounts = useMemo(() => {
@@ -39,15 +34,6 @@ export default function Home() {
       ? data
       : data.filter(item => item.keyword === activeTab);
 
-    if (searchQuery.trim()) {
-      filtered = filtered.map(keywordData => ({
-        ...keywordData,
-        questions: keywordData.questions.filter(q =>
-          matchesSearchQuery(q.title, q.preview, searchQuery)
-        ),
-      })).filter(keywordData => keywordData.questions.length > 0);
-    }
-
     const sorted: KeywordQuestions[] = filtered.map(keywordData => ({
       ...keywordData,
       questions: [...keywordData.questions].sort((a, b) => {
@@ -58,24 +44,16 @@ export default function Home() {
     }));
 
     return sorted;
-  }, [data, activeTab, searchQuery, sortBy]);
-
-  const searchResultCount = useMemo(() => {
-    return processedData.reduce((total, keywordData) => total + keywordData.questions.length, 0);
-  }, [processedData]);
+  }, [data, activeTab, sortBy]);
 
   return (
     <Layout>
-
       <ControlPanel
         activeTab={activeTab}
         onTabChange={setActiveTab}
         questionCounts={questionCounts}
-        searchQuery={searchQuery}
-        onSearch={setSearchQuery}
         sortBy={sortBy}
         onSortChange={setSortBy}
-        searchResultCount={searchResultCount}
         onRefresh={refresh}
         isRefreshing={isRefreshing}
         lastUpdated={lastUpdated}

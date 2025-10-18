@@ -1,16 +1,14 @@
 'use client';
 
 import { Question } from '@/lib/types';
-import HighlightedText from './HighlightedText';
 
 interface QuestionCardProps {
   question: Question;
   keyword: string;
   index: number;
-  searchQuery?: string;
 }
 
-export default function QuestionCard({ question, keyword, index, searchQuery = '' }: QuestionCardProps) {
+export default function QuestionCard({ question, keyword, index }: QuestionCardProps) {
   return (
     <a
       href={question.link}
@@ -25,11 +23,11 @@ export default function QuestionCard({ question, keyword, index, searchQuery = '
         <span>{question.date}</span>
       </div>
       <h2 className="text-lg font-semibold line-clamp-2 mb-2">
-        <HighlightedText text={question.title} query={searchQuery} />
+        {question.title}
       </h2>
       {question.preview && question.preview !== question.date && (
         <p className="text-sm text-muted-foreground line-clamp-3">
-          <HighlightedText text={question.preview} query={searchQuery} />
+          {question.preview}
         </p>
       )}
     </a>
