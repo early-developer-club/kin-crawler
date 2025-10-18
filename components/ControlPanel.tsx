@@ -1,21 +1,9 @@
 'use client';
 
-import { Keyword, KEYWORDS } from '@/lib/types';
+import { Keyword } from '@/lib/types';
 import TabNavigation from './TabNavigation';
 import SearchBar from './SearchBar';
 import SortOptions, { SortType } from './SortOptions';
-
-interface ControlPanelProps {
-  activeTab: Keyword | 'all';
-  onTabChange: (tab: Keyword | 'all') => void;
-  questionCounts?: Record<string, number>;
-  searchQuery: string;
-  onSearch: (query: string) => void;
-  sortBy: SortType;
-  onSortChange: (sort: SortType) => void;
-  searchResultCount: number;
-}
-
 import { Button } from '@/components/ui/button';
 
 interface ControlPanelProps {
@@ -46,20 +34,23 @@ export default function ControlPanel({
   lastUpdated,
 }: ControlPanelProps) {
   return (
-    <div className="w-full border-b">
-      <div className="container mx-auto px-4 space-y-4 py-4">
-        <div className="flex justify-between items-center">
-          <TabNavigation
-            activeTab={activeTab}
-            onTabChange={onTabChange}
-            questionCounts={questionCounts}
-          />
-          <div className="flex items-center gap-2">
+    <div className="w-full border-b bg-card">
+      <div className="container mx-auto px-4 py-4">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <TabNavigation
+              activeTab={activeTab}
+              onTabChange={onTabChange}
+              questionCounts={questionCounts}
+            />
+          </div>
+          <div className="flex items-center justify-end gap-4">
             {lastUpdated && (
-                <div className="hidden md:block text-sm text-muted-foreground">
+                <div className="hidden lg:block text-sm text-muted-foreground">
                   Last updated: {lastUpdated.toLocaleTimeString('ko-KR', { hour: '2-digit', minute: '2-digit' })}
                 </div>
             )}
+            <SortOptions sortBy={sortBy} onSortChange={onSortChange} />
             {onRefresh && (
               <Button onClick={onRefresh} disabled={isRefreshing} size="sm" variant="outline">
                 <svg
@@ -83,16 +74,13 @@ export default function ControlPanel({
             )}
           </div>
         </div>
-        <div className="flex items-center justify-between flex-wrap gap-4">
+        <div className="mt-4">
           <SearchBar onSearch={onSearch} placeholder="질문 제목 또는 내용으로 검색..." />
-          <div className="flex items-center gap-4">
-            <SortOptions sortBy={sortBy} onSortChange={onSortChange} />
-            {searchQuery && (
-              <div className="text-sm text-muted-foreground">
-                <span className="font-bold text-foreground">{searchResultCount}개</span>의 검색 결과
-              </div>
-            )}
-          </div>
+          {searchQuery && (
+            <div className="mt-2 text-sm text-muted-foreground">
+              <span className="font-bold text-foreground">{searchResultCount}개</span>의 검색 결과
+            </div>
+          )}
         </div>
       </div>
     </div>
