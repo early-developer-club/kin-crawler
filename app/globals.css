@@ -51,13 +51,11 @@
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: hsl(var(--border));
   }
   body {
-    @apply bg-background text-foreground;
-  }
-  a {
-    @apply text-primary hover:underline;
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
   }
 }
 
