@@ -96,9 +96,62 @@ npm run dev
 }
 ```
 
+### Task 2: 크롤링 로직 구현 ✅
+
+**날짜**: 2025-10-18
+
+#### 실행 내용
+
+1. **타입 정의 생성**
+   - `lib/types.ts` - Question, KeywordQuestions 인터페이스 정의
+   - 키워드 타입 및 상수 정의
+
+2. **크롤러 유틸리티 구현**
+   - `utils/crawler.ts` 생성
+   - `generateSearchUrl()` - 키워드별 검색 URL 생성 (페이지네이션 지원)
+   - `crawlPage()` - 한 페이지의 질문 데이터 추출
+   - `crawlKinQuestions()` - 키워드당 50개 질문 크롤링 (5페이지)
+   - `crawlAllKeywords()` - 모든 키워드 크롤링
+   - `extractDate()` - 날짜 텍스트 파싱
+
+3. **API 라우트 생성**
+   - `app/api/proxy/route.ts` - CORS 우회용 프록시 (선택적 사용)
+   - `app/api/crawl/route.ts` - 크롤링 API 엔드포인트
+     - `GET /api/crawl` - 모든 키워드 크롤링
+     - `GET /api/crawl?keyword=ChatGPT` - 특정 키워드 크롤링
+
+4. **페이지네이션 구현**
+   - 네이버 지식인 페이지당 10개 제한 대응
+   - 5페이지 순차 크롤링으로 50개 데이터 수집
+   - 과도한 요청 방지를 위한 500ms 딜레이
+
+#### 테스트 결과
+```bash
+# 단일 키워드 테스트
+curl "http://localhost:3000/api/crawl?keyword=ChatGPT" | jq '.questions | length'
+# 결과: 50
+
+# 모든 키워드 테스트
+curl "http://localhost:3000/api/crawl" | jq -r '.[] | "\(.keyword): \(.questions | length)개"'
+# 결과:
+# ChatGPT: 50개
+# Gemini: 50개
+# Claude: 50개
+# AI 에이전트: 50개
+```
+
+#### 결과물
+- ✅ `utils/crawler.ts` - 크롤링 핵심 로직
+- ✅ `lib/types.ts` - TypeScript 타입 정의
+- ✅ `app/api/crawl/route.ts` - REST API 엔드포인트
+- ✅ `app/api/proxy/route.ts` - CORS 우회 프록시
+- ✅ 키워드당 최신순 50개 제한 로직 구현
+- ✅ 에러 핸들링 포함
+
 ## 🎯 다음 단계
 
-- [ ] Task 2: 크롤링 로직 구현
+- [x] Task 1: 프로젝트 초기 설정 및 기술 스택 결정
+- [x] Task 2: 크롤링 로직 구현
 - [ ] Task 3: 데이터 관리 및 상태 관리
 - [ ] Task 4: UI 컴포넌트 개발 - 레이아웃
 - [ ] Task 5: UI 컴포넌트 개발 - 질문 리스트
