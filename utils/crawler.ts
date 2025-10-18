@@ -65,30 +65,33 @@ async function crawlPage(keyword: string, page: number): Promise<Question[]> {
 export async function crawlKinQuestions(keyword: Keyword): Promise<KeywordQuestions> {
   try {
     const allQuestions: Question[] = [];
+    const uniqueLinks = new Set<string>();
     const maxPages = 5; // 50개를 가져오기 위해 5페이지
 
-    // 각 페이지를 순차적으로 크롤링
     for (let page = 1; page <= maxPages; page++) {
       const pageQuestions = await crawlPage(keyword, page);
-      allQuestions.push(...pageQuestions);
 
-      // 이미 50개 이상이면 중단
+      for (const question of pageQuestions) {
+        if (!uniqueLinks.has(question.link)) {
+          uniqueLinks.add(question.link);
+          allQuestions.push(question);
+        }
+      }
+
       if (allQuestions.length >= 50) {
         break;
       }
 
-      // 결과가 없으면 중단
       if (pageQuestions.length === 0) {
         break;
       }
 
-      // 과도한 요청 방지를 위한 딜레이
       await new Promise(resolve => setTimeout(resolve, 500));
     }
 
     return {
       keyword,
-      questions: allQuestions.slice(0, 50), // 정확히 50개로 제한
+      questions: allQuestions.slice(0, 50),
     };
   } catch (error) {
     console.error(`Error crawling keyword "${keyword}":`, error);

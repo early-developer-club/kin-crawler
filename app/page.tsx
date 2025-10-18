@@ -66,11 +66,6 @@ export default function Home() {
 
   return (
     <Layout>
-      <Header
-        onRefresh={refresh}
-        isRefreshing={isRefreshing}
-        lastUpdated={lastUpdated}
-      />
 
       <ControlPanel
         activeTab={activeTab}
@@ -81,6 +76,9 @@ export default function Home() {
         sortBy={sortBy}
         onSortChange={setSortBy}
         searchResultCount={searchResultCount}
+        onRefresh={refresh}
+        isRefreshing={isRefreshing}
+        lastUpdated={lastUpdated}
       />
 
       <main className="container mx-auto px-4 py-4">

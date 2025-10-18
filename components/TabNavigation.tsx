@@ -19,31 +19,25 @@ export default function TabNavigation({
     ...KEYWORDS.map(keyword => ({ id: keyword, label: keyword })),
   ];
 
-  const totalCount = Object.values(questionCounts || {}).reduce((sum, n) => sum + n, 0);
-
   return (
     <div className="w-full">
-      <div className="container mx-auto px-4">
-        <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as Keyword | 'all')} className="w-full">
-          <TabsList className="overflow-x-auto scrollbar-hide h-auto">
-            {tabs.map(tab => {
-              const count = tab.id === 'all'
-                ? totalCount
-                : questionCounts?.[tab.id] || 0;
-
-              return (
-                <TabsTrigger key={tab.id} value={tab.id} className="flex items-center space-x-2">
-                  <span>{tab.label}</span>
-                  {count > 0 && (
-                    <span className="ml-2 inline-flex items-center justify-center rounded-full bg-muted px-2.5 py-0.5 text-xs font-semibold text-muted-foreground">
-                      {count}
-                    </span>
-                  )}
-                </TabsTrigger>
-              );
-            })}
-          </TabsList>
-        </Tabs>
+      <div className="flex space-x-4 overflow-x-auto scrollbar-hide">
+        {tabs.map(tab => {
+          const isActive = activeTab === tab.id;
+          return (
+            <button
+              key={tab.id}
+              onClick={() => onTabChange(tab.id)}
+              className={`whitespace-nowrap py-2 text-sm font-medium transition-colors ${
+                isActive
+                  ? 'border-b-2 border-primary text-primary'
+                  : 'text-muted-foreground hover:text-primary'
+              }`}
+            >
+              {tab.label}
+            </button>
+          );
+        })}
       </div>
     </div>
   );
