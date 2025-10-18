@@ -18,7 +18,7 @@ export default function QuestionList({ data, searchQuery = '' }: QuestionListPro
   }
 
   return (
-    <div className="border-t">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 border-t pt-4">
       {allQuestions.map((question, index) => (
         <QuestionCard
           key={`${question.keyword}-${index}`}
