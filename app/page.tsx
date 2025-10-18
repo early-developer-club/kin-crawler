@@ -1,7 +1,11 @@
 'use client';
 
+import { useState } from 'react';
 import { useKinQuestions } from '@/hooks/useKinQuestions';
-import { KEYWORDS } from '@/lib/types';
+import { Keyword, KEYWORDS } from '@/lib/types';
+import Layout from '@/components/Layout';
+import Header from '@/components/Header';
+import TabNavigation from '@/components/TabNavigation';
 
 export default function Home() {
   const {
@@ -16,121 +20,125 @@ export default function Home() {
     clearError,
   } = useKinQuestions();
 
+  const [activeTab, setActiveTab] = useState<Keyword | 'all'>('all');
+
+  // 키워드별 질문 개수
+  const questionCounts = KEYWORDS.reduce((acc, keyword) => {
+    const keywordData = getQuestionsByKeyword(keyword);
+    acc[keyword] = keywordData?.questions.length || 0;
+    return acc;
+  }, {} as Record<string, number>);
+
+  // 필터링된 데이터
+  const filteredData = activeTab === 'all'
+    ? data
+    : data.filter(item => item.keyword === activeTab);
+
   return (
-    <main className="min-h-screen p-8">
-      <div className="max-w-7xl mx-auto">
-        <h1 className="text-4xl font-bold mb-8 text-center">
-          네이버 지식인 AI 크롤러
-        </h1>
-        <p className="text-center text-gray-600 dark:text-gray-400 mb-8">
-          ChatGPT, Gemini, Claude, AI 에이전트 관련 최신 질문을 확인하세요
-        </p>
+    <Layout>
+      {/* 헤더 */}
+      <Header
+        onRefresh={refresh}
+        isRefreshing={isRefreshing}
+        lastUpdated={lastUpdated}
+      />
 
-        {/* 상태 표시 */}
-        <div className="mb-8 text-center">
-          {isLoading && (
-            <p className="text-blue-600">데이터를 불러오는 중...</p>
-          )}
+      {/* 탭 네비게이션 */}
+      <TabNavigation
+        activeTab={activeTab}
+        onTabChange={setActiveTab}
+        questionCounts={questionCounts}
+      />
 
-          {isRefreshing && (
-            <p className="text-blue-600">데이터를 새로고침하는 중...</p>
-          )}
-
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative">
-              <strong className="font-bold">에러: </strong>
-              <span className="block sm:inline">{error}</span>
+      {/* 메인 콘텐츠 */}
+      <main className="container mx-auto px-4 py-8">
+        {/* 에러 메시지 */}
+        {error && (
+          <div className="mb-6 rounded-lg bg-red-50 border border-red-200 dark:bg-red-900/20 dark:border-red-800 p-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center space-x-2">
+                <svg className="h-5 w-5 text-red-500" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+                </svg>
+                <span className="text-sm font-medium text-red-800 dark:text-red-200">{error}</span>
+              </div>
               <button
                 onClick={clearError}
-                className="ml-4 underline"
+                className="text-red-500 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300"
               >
-                닫기
+                <svg className="h-5 w-5" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clipRule="evenodd" />
+                </svg>
               </button>
             </div>
-          )}
+          </div>
+        )}
 
-          {lastUpdated && !isLoading && !error && (
-            <div className="text-sm text-gray-500">
-              마지막 업데이트: {lastUpdated.toLocaleString('ko-KR')}
-            </div>
-          )}
-        </div>
+        {/* 로딩 상태 */}
+        {isLoading && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <div className="h-12 w-12 animate-spin rounded-full border-4 border-blue-500 border-t-transparent"></div>
+            <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">데이터를 불러오는 중...</p>
+          </div>
+        )}
 
-        {/* 새로고침 버튼 */}
-        <div className="mb-8 text-center">
-          <button
-            onClick={refresh}
-            disabled={isLoading || isRefreshing}
-            className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded disabled:opacity-50"
-          >
-            {isRefreshing ? '새로고침 중...' : '데이터 새로고침'}
-          </button>
-        </div>
+        {/* 데이터가 없을 때 */}
+        {!isLoading && data.length === 0 && (
+          <div className="flex flex-col items-center justify-center py-12">
+            <svg className="h-16 w-16 text-slate-300 dark:text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+            </svg>
+            <p className="mt-4 text-sm text-slate-600 dark:text-slate-400">아직 데이터가 없습니다</p>
+          </div>
+        )}
 
-        {/* 통계 */}
-        {data.length > 0 && (
-          <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
-            {KEYWORDS.map(keyword => {
-              const keywordData = getQuestionsByKeyword(keyword);
-              return (
-                <div key={keyword} className="bg-white dark:bg-gray-800 p-4 rounded-lg shadow">
-                  <h3 className="font-bold text-lg mb-2">{keyword}</h3>
-                  <p className="text-2xl text-blue-600">
-                    {keywordData?.questions.length || 0}개
-                  </p>
+        {/* 질문 목록 */}
+        {!isLoading && filteredData.length > 0 && (
+          <div className="space-y-4">
+            {filteredData.map(keywordData => (
+              <div key={keywordData.keyword} className="rounded-xl bg-white dark:bg-slate-800 shadow-sm border border-slate-200 dark:border-slate-700 overflow-hidden">
+                {/* 키워드 헤더 */}
+                <div className="border-b border-slate-200 dark:border-slate-700 bg-gradient-to-r from-blue-50 to-purple-50 dark:from-slate-700 dark:to-slate-800 px-6 py-4">
+                  <h2 className="text-lg font-bold text-slate-900 dark:text-white">
+                    {keywordData.keyword}
+                    <span className="ml-2 text-sm font-normal text-slate-600 dark:text-slate-400">
+                      ({keywordData.questions.length}개)
+                    </span>
+                  </h2>
                 </div>
-              );
-            })}
+
+                {/* 질문 리스트 */}
+                <ul className="divide-y divide-slate-100 dark:divide-slate-700">
+                  {keywordData.questions.map((question, index) => (
+                    <li key={index} className="px-6 py-4 hover:bg-slate-50 dark:hover:bg-slate-700/50 transition-colors">
+                      <a
+                        href={question.link}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="group block"
+                      >
+                        <div className="flex items-start justify-between gap-4">
+                          <h3 className="flex-1 text-sm font-medium text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                            {question.title}
+                          </h3>
+                          <span className="flex-shrink-0 text-xs text-slate-500 dark:text-slate-400">
+                            {question.date}
+                          </span>
+                        </div>
+                        {question.preview && (
+                          <p className="mt-1 text-xs text-slate-600 dark:text-slate-400 line-clamp-2">
+                            {question.preview}
+                          </p>
+                        )}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
         )}
-
-        {/* 전체 통계 */}
-        {totalQuestionsCount > 0 && (
-          <div className="text-center mb-8">
-            <p className="text-xl">
-              총 <span className="font-bold text-blue-600">{totalQuestionsCount}</span>개의 질문
-            </p>
-          </div>
-        )}
-
-        {/* 질문 목록 미리보기 */}
-        {data.length > 0 && (
-          <div className="space-y-6">
-            {KEYWORDS.map(keyword => {
-              const keywordData = getQuestionsByKeyword(keyword);
-              if (!keywordData) return null;
-
-              return (
-                <div key={keyword} className="bg-white dark:bg-gray-800 p-6 rounded-lg shadow">
-                  <h2 className="text-2xl font-bold mb-4">{keyword}</h2>
-                  <ul className="space-y-2">
-                    {keywordData.questions.slice(0, 5).map((question, index) => (
-                      <li key={index} className="border-b pb-2">
-                        <a
-                          href={question.link}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="text-blue-600 hover:underline"
-                        >
-                          {question.title}
-                        </a>
-                        <span className="text-sm text-gray-500 ml-2">
-                          {question.date}
-                        </span>
-                      </li>
-                    ))}
-                  </ul>
-                  {keywordData.questions.length > 5 && (
-                    <p className="text-sm text-gray-500 mt-2">
-                      외 {keywordData.questions.length - 5}개 질문
-                    </p>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        )}
-      </div>
-    </main>
+      </main>
+    </Layout>
   );
 }
