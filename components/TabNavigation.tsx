@@ -22,7 +22,7 @@ export default function TabNavigation({
   const totalCount = Object.values(questionCounts || {}).reduce((sum, n) => sum + n, 0);
 
   return (
-    <div className="w-full border-b">
+    <div className="w-full">
       <div className="container mx-auto px-4">
         <Tabs value={activeTab} onValueChange={(value) => onTabChange(value as Keyword | 'all')} className="w-full">
           <TabsList className="overflow-x-auto scrollbar-hide h-auto">
